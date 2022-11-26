@@ -1,18 +1,21 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Files;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 public class IOSearcher implements TextSearcher, Result {
 
-
+    private String query;
+    private Map<String,Set<String>> answer = new HashMap<>();
     @Override
     public Result search(String text, String rootPath) throws FileNotFoundException {
-        String wordToFind = text;
-        String path = rootPath;//C:\Users\Moshe Sayada\IdeaProjects\TextSearchEngine\data
-        if (path.indexOf(".txt") != -1) {
+        String query = text;
+        String path = rootPath;
+        Set<String> set = new HashSet<>();
+
+
+
+         if (path.lastIndexOf(".txt") != -1) {
             File file = new File(path);
             Scanner scan = new Scanner(file);
             int lineNum = 1;
@@ -20,11 +23,14 @@ public class IOSearcher implements TextSearcher, Result {
                 String line = scan.nextLine();
                 if (line.indexOf(text) != -1) {
                     System.out.println(file.getName() + " line number : " + lineNum + " " + line);
+                    set.add(line);
 
                 }
                 lineNum++;
             }
-        }
+             answer.put(path, set);
+
+         }
         else
         {
 
@@ -34,8 +40,10 @@ public class IOSearcher implements TextSearcher, Result {
             }
             search(text , file.getAbsolutePath());
         }
-
-        return null;
+        ResultClass res = new ResultClass();
+        res.setQuery(query);
+        res.setAnswer(answer);
+        return res;
     }
 
     @Override
@@ -48,5 +56,13 @@ public class IOSearcher implements TextSearcher, Result {
         return null;
     }
     public static void main(String[] args) throws FileNotFoundException {
+        IOSearcher io = new IOSearcher();
+        String path = "//C:\\Users\\Moshe Sayada\\IdeaProjects\\TextSearchEngine\\data\\a1.txt";
+        String text = "dog";
+       Result r = io.search(text,path);
+        Map<String,Set<String>> answer = r.getAnswer();
+         System.out.println(answer.get(path));
+
+
     }
 }
