@@ -9,7 +9,7 @@ public class IOSearcher implements TextSearcher, Result {
     private Map<String,Set<String>> answer = new HashMap<>();
     @Override
     public Result search(String text, String rootPath) throws FileNotFoundException {
-        String query = text;
+          query = text;
         String path = rootPath;
         Set<String> set = new HashSet<>();
 
@@ -23,7 +23,7 @@ public class IOSearcher implements TextSearcher, Result {
                 String line = scan.nextLine();
                 if (line.indexOf(text) != -1) {
                     System.out.println(file.getName() + " line number : " + lineNum + " " + line);
-                    set.add(line);
+                    set.add("line number " + lineNum  + ":" + line );
 
                 }
                 lineNum++;
@@ -35,33 +35,51 @@ public class IOSearcher implements TextSearcher, Result {
         {
 
             File file = new File(path);
+            if(file.listFiles() == null)
+                return this;
             for (File s : file.listFiles()){
-                System.out.println(s.getAbsolutePath());
+//                System.out.println(s.getAbsolutePath());
+
+                search(text , s.getAbsolutePath());
             }
-            search(text , file.getAbsolutePath());
+
         }
-        ResultClass res = new ResultClass();
-        res.setQuery(query);
-        res.setAnswer(answer);
-        return res;
+
+        return this;
     }
 
     @Override
     public String getQuery() {
-        return null;
+
+        return query;
+    }
+
+    public void setQuery(String query) {
+        query = query;
+    }
+
+    public void setAnswer(Map<String, Set<String>> answer) {
+        answer = answer;
     }
 
     @Override
     public Map<String, Set<String>> getAnswer() {
-        return null;
+        return answer;
     }
     public static void main(String[] args) throws FileNotFoundException {
         IOSearcher io = new IOSearcher();
-        String path = "//C:\\Users\\Moshe Sayada\\IdeaProjects\\TextSearchEngine\\data\\a1.txt";
+        String path = "//C:\\Users\\Moshe Sayada\\IdeaProjects";
         String text = "dog";
        Result r = io.search(text,path);
-        Map<String,Set<String>> answer = r.getAnswer();
-         System.out.println(answer.get(path));
+        Map<String,Set<String>> answer_ = r.getAnswer();
+        for (Map.Entry<String,Set<String>> entry : answer_.entrySet())
+        {
+            if(!entry.getValue().isEmpty())
+            {
+            System.out.println("Key = " + entry.getKey() +
+                    ", Value = " + entry.getValue());
+            }
+        }
 
 
     }
