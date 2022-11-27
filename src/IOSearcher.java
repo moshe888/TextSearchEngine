@@ -74,7 +74,7 @@ public class IOSearcher implements TextSearcher, Result {
     public static void main(String[] args) throws FileNotFoundException {
         IOSearcher io = new IOSearcher();
         String path = "//C:\\Users\\Moshe Sayada";
-        String text = "moshe sayada";
+        String text = "moshe ";
        Result r = io.search(text,path);
         Map<String,Set<String>> answer_ = r.getAnswer();
         for (Map.Entry<String,Set<String>> entry : answer_.entrySet())
