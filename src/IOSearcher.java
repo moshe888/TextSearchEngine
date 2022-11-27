@@ -14,36 +14,41 @@ public class IOSearcher implements TextSearcher, Result {
         Set<String> set = new HashSet<>();
 
 
+        try {
 
-         if (path.lastIndexOf(".txt") != -1) {
-            File file = new File(path);
-            Scanner scan = new Scanner(file);
-            int lineNum = 1;
-            while (scan.hasNextLine()) {
-                String line = scan.nextLine();
-                if (line.indexOf(text) != -1) {
-                    System.out.println(file.getName() + " line number : " + lineNum + " " + line);
-                    set.add("line number " + lineNum  + ":" + line );
 
+            if (path.lastIndexOf(".txt") != -1) {
+                File file = new File(path);
+                Scanner scan = new Scanner(file);
+                int lineNum = 1;
+                while (scan.hasNextLine()) {
+                    String line = scan.nextLine();
+                    if (line.indexOf(text) != -1) {
+                        System.out.println(file.getName() + " line number : " + lineNum + " " + line);
+                        set.add("line number " + lineNum + ":" + line);
+
+                    }
+                    lineNum++;
                 }
-                lineNum++;
-            }
-             answer.put(path, set);
+                answer.put(path, set);
 
-         }
-        else
-        {
+            } else {
 
-            File file = new File(path);
-            if(file.listFiles() == null)
-                return this;
-            for (File s : file.listFiles()){
+                File file = new File(path);
+                if (file.listFiles() == null)
+                    return this;
+                for (File s : file.listFiles()) {
 //                System.out.println(s.getAbsolutePath());
 
-                search(text , s.getAbsolutePath());
+                    search(text, s.getAbsolutePath());
+                }
+
             }
+        } catch (Exception e){
+            System.out.println("exception");
 
         }
+
 
         return this;
     }
@@ -68,8 +73,8 @@ public class IOSearcher implements TextSearcher, Result {
     }
     public static void main(String[] args) throws FileNotFoundException {
         IOSearcher io = new IOSearcher();
-        String path = "//C:\\Users\\Moshe Sayada\\IdeaProjects";
-        String text = "dog";
+        String path = "//C:\\Users\\Moshe Sayada";
+        String text = "moshe sayada";
        Result r = io.search(text,path);
         Map<String,Set<String>> answer_ = r.getAnswer();
         for (Map.Entry<String,Set<String>> entry : answer_.entrySet())
