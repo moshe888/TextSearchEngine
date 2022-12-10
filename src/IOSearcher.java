@@ -1,12 +1,16 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.nio.file.Files;
 import java.util.*;
 
 public class IOSearcher implements TextSearcher, Result {
 
     private String query;
     private Map<String,Set<String>> answer = new HashMap<>();
+
+    public IOSearcher() {
+
+    }
+
     @Override
     public Result search(String text, String rootPath) throws FileNotFoundException {
           query = text;
@@ -24,7 +28,7 @@ public class IOSearcher implements TextSearcher, Result {
                 while (scan.hasNextLine()) {
                     String line = scan.nextLine();
                     if (line.indexOf(text) != -1) {
-                        System.out.println(file.getName() + " line number : " + lineNum + " " + line);
+                        System.out.println(file.getName() + ", line number "+ lineNum + ": ***" + line + "***");
                         set.add("line number " + lineNum + ":" + line);
 
                     }
@@ -45,7 +49,7 @@ public class IOSearcher implements TextSearcher, Result {
 
             }
         } catch (Exception e){
-            System.out.println("exception");
+            System.out.println(e.getMessage() + " Exception ");
 
         }
 
@@ -73,8 +77,8 @@ public class IOSearcher implements TextSearcher, Result {
     }
     public static void main(String[] args) throws FileNotFoundException {
         IOSearcher io = new IOSearcher();
-        String path = "//C:\\Users\\Moshe Sayada";
-        String text = "moshe ";
+        String path = "C:\\Users\\Moshe Sayada\\IdeaProjects\\TextSearchEngine\\data";
+        String text = "dog";
        Result r = io.search(text,path);
         Map<String,Set<String>> answer_ = r.getAnswer();
         for (Map.Entry<String,Set<String>> entry : answer_.entrySet())
