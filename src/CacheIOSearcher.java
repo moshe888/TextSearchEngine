@@ -16,7 +16,7 @@ public class CacheIOSearcher  implements CacheSearcher{
     @Override
     public Set<Result> getCachedResults() {
 
-        return null;
+        return q;
     }
 
     @Override
