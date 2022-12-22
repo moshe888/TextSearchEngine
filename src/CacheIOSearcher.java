@@ -3,6 +3,15 @@ import java.util.Queue;
 import java.util.Set;
 
 public class CacheIOSearcher  implements CacheSearcher{
+//    public interface CacheSearcher extends TextSearcher{
+//        public   Set<Result> getCachedResults();
+//        public void clear();
+//
+//
+//        public void remove(Result r);
+//
+//
+//    }
     Set<Result> q;
     IOSearcher io ;
 

@@ -1,9 +1,16 @@
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 public class ResultClass implements Result{
     public   String Query;
     public Map<String, Set<String>> Answer;
+
+    public ResultClass() {
+         Answer = new HashMap<>();
+
+    }
+
     @Override
     public String getQuery() {
 

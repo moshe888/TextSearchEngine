@@ -2,10 +2,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-public class IOSearcher implements TextSearcher, Result {
 
-    private String query;
-    private Map<String,Set<String>> answer = new HashMap<>();
+public class IOSearcher implements TextSearcher  {
+
+
+
+    ResultClass r = new ResultClass();
+
+//     private Map<String,Set<String>> answer = new HashMap<>();
 
     public IOSearcher() {
 
@@ -13,14 +17,12 @@ public class IOSearcher implements TextSearcher, Result {
 
     @Override
     public Result search(String text, String rootPath) throws FileNotFoundException {
-          query = text;
+        r.Query = text;
         String path = rootPath;
         Set<String> set = new HashSet<>();
 
 
         try {
-
-
             if (path.lastIndexOf(".txt") != -1) {
                 File file = new File(path);
                 Scanner scan = new Scanner(file);
@@ -34,13 +36,13 @@ public class IOSearcher implements TextSearcher, Result {
                     }
                     lineNum++;
                 }
-                answer.put(path, set);
+                r.Answer.put(path, set);
 
             } else {
 
                 File file = new File(path);
                 if (file.listFiles() == null)
-                    return this;
+                    return r;
                 for (File s : file.listFiles()) {
 //                System.out.println(s.getAbsolutePath());
 
@@ -54,14 +56,14 @@ public class IOSearcher implements TextSearcher, Result {
         }
 
 
-        return this;
+        return r;
     }
 
-    @Override
-    public String getQuery() {
-
-        return query;
-    }
+//    @Override
+//    public String getQuery() {
+//
+//        return query;
+//    }
 
     public void setQuery(String query) {
         query = query;
@@ -71,10 +73,10 @@ public class IOSearcher implements TextSearcher, Result {
         answer = answer;
     }
 
-    @Override
-    public Map<String, Set<String>> getAnswer() {
-        return answer;
-    }
+//    @Override
+//    public Map<String, Set<String>> getAnswer() {
+//        return answer;
+//    }
     public static void main(String[] args) throws FileNotFoundException {
         IOSearcher io = new IOSearcher();
         String path = "C:\\Users\\Moshe Sayada\\IdeaProjects\\TextSearchEngine\\data";
