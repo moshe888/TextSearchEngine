@@ -20,13 +20,6 @@ public class IOSearcher implements TextSearcher  {
             return Query;
         }
 
-        public void setQuery(String query) {
-            Query = query;
-        }
-
-        public void setAnswer(Map<String, Set<String>> answer) {
-            Answer = answer;
-        }
 
         @Override
         public Map<String, Set<String>> getAnswer() {
@@ -34,8 +27,7 @@ public class IOSearcher implements TextSearcher  {
         }
     }
 
-    //     private Map<String,Set<String>> answer = new HashMap<>();
-    public IOSearcher() {
+     public IOSearcher() {
 
     }
     @Override
@@ -45,9 +37,6 @@ public class IOSearcher implements TextSearcher  {
         String path = rootPath;
         Set<String> set = new HashSet<>();
 
-        //if(ceche = cecheiosearcher(this))
-            //r=ceche.search()
-            //return r;
 
         try {
             if (path.lastIndexOf(".txt") != -1) {
@@ -86,22 +75,4 @@ public class IOSearcher implements TextSearcher  {
         return r;
     }
 
-//    @Override
-//    public String getQuery() {
-//
-////        return query;
-////    }
-//
-//    public void setQuery(String query) {
-//        query = query;
-//    }
-//
-//    public void setAnswer(Map<String, Set<String>> answer) {
-//        answer = answer;
-//    }
-//
-////    @Override
-////    public Map<String, Set<String>> getAnswer() {
-////        return answer;
-////    }
 }
