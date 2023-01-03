@@ -1,45 +1,64 @@
 import java.io.FileNotFoundException;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 
 public class CacheIOSearcher  implements CacheSearcher{
-//    public interface CacheSearcher extends TextSearcher{
-//        public   Set<Result> getCachedResults();
-//        public void clear();
-//
-//
-//        public void remove(Result r);
-//
-//
-//    }
-    Set<Result> q;
-    IOSearcher io ;
 
-    public CacheIOSearcher(Set<Result> q, IOSearcher io) {
-        this.q = q;
+    Map<String, Result> cache = new HashMap<>() ;
+    IOSearcher io ;
+    private final Object writeLock = new Object();
+
+    public CacheIOSearcher( IOSearcher io) {
         this.io = new IOSearcher();
-    }
+     }
 
 
 
     @Override
     public Set<Result> getCachedResults() {
+        Set<Result> results = new HashSet<>();
+        for(String s : cache.keySet())//??
+        {
+            results.add(cache.get(s));
+        }
 
-        return q;
+        return results;
     }
 
     @Override
     public void clear() {
-
-    }
+        cache.clear();
+     }
 
     @Override
     public void remove(Result r) {
+        for(String s : cache.keySet())//??
+        {
+            if(cache.get(s).equals(r))
+            {
+                cache.remove(s);
+            }
+        }
 
     }
 
     @Override
     public Result search(String text, String rootPath) throws FileNotFoundException {
-        return null;
+        String search_ = text+","+rootPath;//?
+
+            if (cache.get(search_) == null) {
+                Result r = io.search(text, rootPath);
+                synchronized (writeLock) {
+                    cache.put(search_, r);
+                    System.out.println("added result");
+
+                }
+            }
+                else{
+                    System.out.println("no added result");
+                }
+
+
+        return cache.get(search_);
+
     }
 }

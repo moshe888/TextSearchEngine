@@ -5,22 +5,49 @@ import java.util.*;
 
 public class IOSearcher implements TextSearcher  {
 
+    public class ResultClass implements Result{
+        public   String Query;
+        public Map<String, Set<String>> Answer;
 
+        public ResultClass() {
+            Answer = new HashMap<>();
 
-    ResultClass r = new ResultClass();
+        }
 
-//     private Map<String,Set<String>> answer = new HashMap<>();
+        @Override
+        public String getQuery() {
 
+            return Query;
+        }
+
+        public void setQuery(String query) {
+            Query = query;
+        }
+
+        public void setAnswer(Map<String, Set<String>> answer) {
+            Answer = answer;
+        }
+
+        @Override
+        public Map<String, Set<String>> getAnswer() {
+            return Answer;
+        }
+    }
+
+    //     private Map<String,Set<String>> answer = new HashMap<>();
     public IOSearcher() {
 
     }
-
     @Override
     public Result search(String text, String rootPath) throws FileNotFoundException {
+        ResultClass r = new ResultClass();
         r.Query = text;
         String path = rootPath;
         Set<String> set = new HashSet<>();
 
+        //if(ceche = cecheiosearcher(this))
+            //r=ceche.search()
+            //return r;
 
         try {
             if (path.lastIndexOf(".txt") != -1) {
@@ -62,36 +89,19 @@ public class IOSearcher implements TextSearcher  {
 //    @Override
 //    public String getQuery() {
 //
-//        return query;
+////        return query;
+////    }
+//
+//    public void setQuery(String query) {
+//        query = query;
 //    }
-
-    public void setQuery(String query) {
-        query = query;
-    }
-
-    public void setAnswer(Map<String, Set<String>> answer) {
-        answer = answer;
-    }
-
-//    @Override
-//    public Map<String, Set<String>> getAnswer() {
-//        return answer;
+//
+//    public void setAnswer(Map<String, Set<String>> answer) {
+//        answer = answer;
 //    }
-    public static void main(String[] args) throws FileNotFoundException {
-        IOSearcher io = new IOSearcher();
-        String path = "C:\\Users\\Moshe Sayada\\IdeaProjects\\TextSearchEngine\\data";
-        String text = "dog";
-       Result r = io.search(text,path);
-        Map<String,Set<String>> answer_ = r.getAnswer();
-        for (Map.Entry<String,Set<String>> entry : answer_.entrySet())
-        {
-            if(!entry.getValue().isEmpty())
-            {
-            System.out.println("Key = " + entry.getKey() +
-                    ", Value = " + entry.getValue());
-            }
-        }
-
-
-    }
+//
+////    @Override
+////    public Map<String, Set<String>> getAnswer() {
+////        return answer;
+////    }
 }
