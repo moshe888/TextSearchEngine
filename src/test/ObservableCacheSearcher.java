@@ -1,8 +1,10 @@
+package test;
+
 import java.util.Observable;
 import java.util.Observer;
 
 public class ObservableCacheSearcher extends Observable {
-    CacheSearcher c;
+    CacheIOSearcher.CacheSearcher c;
 
     @Override
     public synchronized void addObserver(Observer o) {
@@ -19,7 +21,7 @@ public class ObservableCacheSearcher extends Observable {
         super.notifyObservers(arg);
     }
 
-    public ObservableCacheSearcher(CacheSearcher c) {
+    public ObservableCacheSearcher(CacheIOSearcher.CacheSearcher c) {
         this.c = c;
     }
 }
