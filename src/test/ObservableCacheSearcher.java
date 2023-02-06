@@ -1,27 +1,26 @@
 package test;
 
+import java.io.FileNotFoundException;
 import java.util.Observable;
 import java.util.Observer;
 
+import java.util.Observable;
+
 public class ObservableCacheSearcher extends Observable {
-    CacheIOSearcher.CacheSearcher c;
+    CacheIOSearcher.CacheSearcher cacheSearcher;
 
-    @Override
-    public synchronized void addObserver(Observer o) {
-        super.addObserver(o);
+    public ObservableCacheSearcher(CacheIOSearcher.CacheSearcher cacheSearcher) {
+        this.cacheSearcher = cacheSearcher;
     }
 
-    @Override
-    public synchronized void deleteObserver(Observer o) {
-        super.deleteObserver(o);
-    }
-
-    @Override
-    public void notifyObservers(Object arg) {
-        super.notifyObservers(arg);
-    }
-
-    public ObservableCacheSearcher(CacheIOSearcher.CacheSearcher c) {
-        this.c = c;
+    public IOSearcher.Result search(String query, String path) throws FileNotFoundException {
+        IOSearcher.Result result = cacheSearcher.search(query, path);
+        setChanged();
+        String about = query + "added";
+        if(CacheIOSearcher.remove_ != null)
+            about += CacheIOSearcher.remove_ + "removed";
+        notifyObservers(about);
+        return result;
     }
 }
+

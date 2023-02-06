@@ -1,22 +1,37 @@
 package test;
 
-import java.util.concurrent.*;
+import java.io.FileNotFoundException;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveTask;
 
-public class ParallelIOSearcher extends IOSearcher {
-    public ParallelIOSearcher(IOSearcher io) {
-        super();
+public class ParallelIOSearcher implements IOSearcher.TextSearcher {
+
+    public final ForkJoinPool FORK_JOIN_POOL = new ForkJoinPool();
+
+    @Override
+    public IOSearcher.Result search(String text, String rootPath) {
+        SearchTask task = new SearchTask(text, rootPath);
+        return FORK_JOIN_POOL.invoke(task);
     }
 
-    public class ParallelIOSearchert extends ThreadPoolExecutor{
+    private static class SearchTask extends RecursiveTask<IOSearcher.Result> {
+        private String text;
+        private String rootPath;
 
-        public ParallelIOSearchert(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue) {
-            super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
+        public SearchTask(String text, String rootPath) {
+            this.text = text;
+            this.rootPath = rootPath;
         }
 
-     
+        @Override
+        protected IOSearcher.Result compute() {
+            IOSearcher.IOSearcherImpl searcher = new IOSearcher().new IOSearcherImpl();
+            try {
+                return searcher.search(text, rootPath);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
-
-
-    ForkJoinPool Pool = new ForkJoinPool();
 }
 

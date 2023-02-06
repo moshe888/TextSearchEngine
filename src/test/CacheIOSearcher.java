@@ -8,6 +8,8 @@ import java.util.*;
 
 public class CacheIOSearcher  {
     static   Map<SearchKey, IOSearcher.Result> cache;
+    static String remove_ = new String();
+
 
     interface CacheSearcher extends IOSearcher.TextSearcher {
         public Set<IOSearcher.Result> getCachedResults();
@@ -74,11 +76,13 @@ public class CacheIOSearcher  {
 
         @Override
         public void clear() {
+            remove_ = null;
             cache.clear();
         }
 
         @Override
         public void remove(IOSearcher.Result result) {
+            remove_ = result.getQuery();
             cache.values().remove(result);
         }
     }
