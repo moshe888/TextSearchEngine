@@ -2,6 +2,7 @@ package test;
 
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Test {
 
@@ -20,7 +21,9 @@ public class Test {
              String text = scan.nextLine();
 
              Result r = cacheSearcher.search(text, path);
-             System.out.println(r.getAnswer().get("a1.txt"));
+             System.out.println(r.getAnswer());
+//             Set<Result> set = cacheSearcher.getCachedResults();
+//             System.out.println(set);
           }
 
     }
