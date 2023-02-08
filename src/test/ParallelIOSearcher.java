@@ -4,17 +4,17 @@ import java.io.FileNotFoundException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 
-public class ParallelIOSearcher implements IOSearcher.TextSearcher {
+public class ParallelIOSearcher implements TextSearcher {
 
     public final ForkJoinPool FORK_JOIN_POOL = new ForkJoinPool();
 
     @Override
-    public IOSearcher.Result search(String text, String rootPath) {
+    public Result search(String text, String rootPath) {
         SearchTask task = new SearchTask(text, rootPath);
         return FORK_JOIN_POOL.invoke(task);
     }
 
-    private static class SearchTask extends RecursiveTask<IOSearcher.Result> {
+    private static class SearchTask extends RecursiveTask<Result> {
         private String text;
         private String rootPath;
 
@@ -24,8 +24,8 @@ public class ParallelIOSearcher implements IOSearcher.TextSearcher {
         }
 
         @Override
-        protected IOSearcher.Result compute() {
-            IOSearcher.IOSearcherImpl searcher = new IOSearcher().new IOSearcherImpl();
+        protected Result compute() {
+            IOSearcher searcher = new IOSearcher();
             try {
                 return searcher.search(text, rootPath);
             } catch (FileNotFoundException e) {

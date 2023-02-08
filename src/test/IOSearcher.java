@@ -11,18 +11,45 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class IOSearcher {
+public class IOSearcher implements TextSearcher {
 
-    public interface TextSearcher {
-        Result search(String text, String rootPath) throws FileNotFoundException;
+    @Override
+    public Result search(String text, String rootPath) throws FileNotFoundException {
+        Result result = new ResultImpl(text, new HashMap<>());
+
+        File root = new File(rootPath);
+        searchRecursive(root, text, result);
+        return result;
     }
 
-    public interface Result {
-        String getQuery();
-        Map<String, Set<String>> getAnswer();
+    private void searchRecursive(File file, String text, Result result) {
+        if (file.isDirectory()) {
+            for (File f : file.listFiles()) {
+                searchRecursive(f, text, result);
+            }
+        } else if (file.getName().endsWith(".txt")) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                String line;
+                int lineNumber = 1;
+                Set<String> lines = new HashSet<>();
+                while ((line = reader.readLine()) != null) {
+                    if (line.contains(text)) {
+                        lines.add(String.valueOf(lineNumber));
+                    }
+                    lineNumber++;
+                }
+                if (!lines.isEmpty()) {
+                    result.getAnswer().put(file.getName(), lines);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
+}
 
-    public static class ResultImpl implements Result {
+
+       class ResultImpl implements Result {
         private final String query;
         private final Map<String, Set<String>> answer;
 
@@ -42,40 +69,16 @@ public class IOSearcher {
         }
     }
 
-    public class IOSearcherImpl implements TextSearcher {
 
-        @Override
-        public Result search(String text, String rootPath) throws FileNotFoundException {
-            Result result = new ResultImpl(text, new HashMap<>());
 
-            File root = new File(rootPath);
-            searchRecursive(root, text, result);
-            return result;
-        }
 
-        private void searchRecursive(File file, String text, Result result) {
-            if (file.isDirectory()) {
-                for (File f : file.listFiles()) {
-                    searchRecursive(f, text, result);
-                }
-            } else if (file.getName().endsWith(".txt")) {
-                try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-                    String line;
-                    int lineNumber = 1;
-                    Set<String> lines = new HashSet<>();
-                    while ((line = reader.readLine()) != null) {
-                        if (line.contains(text)) {
-                            lines.add(String.valueOf(lineNumber));
-                        }
-                        lineNumber++;
-                    }
-                    if (!lines.isEmpty()) {
-                        result.getAnswer().put(file.getName(), lines);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+interface TextSearcher {
+    Result search(String text, String rootPath) throws FileNotFoundException;
 }
+
+
+interface Result {
+    String getQuery();
+    Map<String, Set<String>> getAnswer();
+}
+

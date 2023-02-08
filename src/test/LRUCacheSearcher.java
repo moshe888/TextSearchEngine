@@ -3,16 +3,16 @@ package test;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-public class LRUCacheSearcher implements CacheIOSearcher.CacheSearcher {
-    private final CacheIOSearcher.CacheSearcher cacheSearcher;
-    private Deque<IOSearcher.Result> doublyQueue;
+public class LRUCacheSearcher implements CacheSearcher {
+    private final CacheSearcher cacheSearcher;
+    private Deque<Result> doublyQueue;
 
-    private HashSet<IOSearcher.Result> hashSet;
+    private HashSet<Result> hashSet;
 
     // maximum capacity of cache
     private final int CACHE_SIZE;
 
-    public LRUCacheSearcher(CacheIOSearcher.CacheSearcher cacheSearcher, int capacity) {
+    public LRUCacheSearcher(CacheSearcher cacheSearcher, int capacity) {
         this.cacheSearcher = cacheSearcher;
         doublyQueue = new LinkedList<>();
         hashSet = new HashSet<>();
@@ -20,18 +20,18 @@ public class LRUCacheSearcher implements CacheIOSearcher.CacheSearcher {
     }
 
     @Override
-    public IOSearcher.Result search(String text, String rootPath) throws FileNotFoundException {
-        IOSearcher.Result result = cacheSearcher.search(text, rootPath);
+    public Result search(String text, String rootPath) throws FileNotFoundException {
+        Result result = cacheSearcher.search(text, rootPath);
         refer(result);
         return result;
     }
 
     /* Refer the result within the LRU cache */
-    public void refer(IOSearcher.Result result) {
+    public void refer(Result result) {
         if (!hashSet.contains(result)) {
             if (getCachedResults().size() == CACHE_SIZE) {
                 System.out.println("remove from LRU cache");
-                IOSearcher.Result lastResult = doublyQueue.removeLast();
+                Result lastResult = doublyQueue.removeLast();
                 remove(lastResult);
             }
         } else {
@@ -42,7 +42,7 @@ public class LRUCacheSearcher implements CacheIOSearcher.CacheSearcher {
     }
 
     @Override
-    public Set<IOSearcher.Result> getCachedResults() {
+    public Set<Result> getCachedResults() {
         return cacheSearcher.getCachedResults();
     }
 
@@ -52,7 +52,7 @@ public class LRUCacheSearcher implements CacheIOSearcher.CacheSearcher {
     }
 
     @Override
-    public void remove(IOSearcher.Result result) {
+    public void remove(Result result) {
         hashSet.remove(result);
         cacheSearcher.remove(result);
     }

@@ -7,14 +7,14 @@ import java.util.Observer;
 import java.util.Observable;
 
 public class ObservableCacheSearcher extends Observable {
-    CacheIOSearcher.CacheSearcher cacheSearcher;
+    CacheSearcher cacheSearcher;
 
-    public ObservableCacheSearcher(CacheIOSearcher.CacheSearcher cacheSearcher) {
+    public ObservableCacheSearcher(CacheSearcher cacheSearcher) {
         this.cacheSearcher = cacheSearcher;
     }
 
-    public IOSearcher.Result search(String query, String path) throws FileNotFoundException {
-        IOSearcher.Result result = cacheSearcher.search(query, path);
+    public Result search(String query, String path) throws FileNotFoundException {
+        Result result = cacheSearcher.search(query, path);
         setChanged();
         String about = query + "added";
         if(CacheIOSearcher.remove_ != null)

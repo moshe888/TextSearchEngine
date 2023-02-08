@@ -6,19 +6,19 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class LFUCacheSearcher implements CacheIOSearcher.CacheSearcher {
-    private final CacheIOSearcher.CacheSearcher cacheSearcher;
+public class LFUCacheSearcher implements CacheSearcher {
+    private final CacheSearcher cacheSearcher;
     private final int limit;
-    private final Map<IOSearcher.Result, Integer> usageCounter;
+    private final Map<Result, Integer> usageCounter;
 
-    public LFUCacheSearcher(CacheIOSearcher.CacheSearcher cacheSearcher, int limit) {
+    public LFUCacheSearcher(CacheSearcher cacheSearcher, int limit) {
         this.cacheSearcher = cacheSearcher;
         this.limit = limit;
         this.usageCounter = new HashMap<>();
     }
 
-    public IOSearcher.Result search(String text, String rootPath) throws FileNotFoundException {
-        IOSearcher.Result result = cacheSearcher.search(text, rootPath);
+    public Result search(String text, String rootPath) throws FileNotFoundException {
+        Result result = cacheSearcher.search(text, rootPath);
         Integer usCounter = usageCounter.get(result);
         if (usCounter == null) {
             usageCounter.put(result, 0);
@@ -32,9 +32,9 @@ public class LFUCacheSearcher implements CacheIOSearcher.CacheSearcher {
     }
 
     private void removeLFU() {
-        IOSearcher.Result lfuResult = null;
+        Result lfuResult = null;
         int minCount = Integer.MAX_VALUE;
-        for (Map.Entry<IOSearcher.Result, Integer> entry : usageCounter.entrySet()) {
+        for (Map.Entry<Result, Integer> entry : usageCounter.entrySet()) {
             if (entry.getValue() < minCount) {
                 minCount = entry.getValue();
                 lfuResult = entry.getKey();
@@ -47,7 +47,7 @@ public class LFUCacheSearcher implements CacheIOSearcher.CacheSearcher {
     }
 
     @Override
-    public Set<IOSearcher.Result> getCachedResults() {return  cacheSearcher.getCachedResults();}
+    public Set<Result> getCachedResults() {return  cacheSearcher.getCachedResults();}
 
     @Override
     public void clear() {
@@ -55,7 +55,7 @@ public class LFUCacheSearcher implements CacheIOSearcher.CacheSearcher {
         usageCounter.clear();
     }
     @Override
-    public void remove(IOSearcher.Result result) {
+    public void remove(Result result) {
         cacheSearcher.remove(result);
         usageCounter.remove(result);
     }
