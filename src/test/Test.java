@@ -1,98 +1,115 @@
 package test;
 
-import java.io.FileNotFoundException;
-import java.util.Scanner;
-import java.util.Set;
+import java.io.IOException;
 
-public class Test {
+import static org.junit.jupiter.api.Assertions.*;
 
+class Test {
+    public static void main(String[] args) throws Exception {
+        org.junit.runner.JUnitCore.main(
+                "test.IOSearcherTest",
+                "test.ParallelIOSearcherTest",
+                "test.CacheIOSearcherTest",
+                "test.LRUCacheSearcherTest",
+                "test.LFUCacheSearcherTest",
+                "test.ObservableCacheSearcherTest"
+        );
+    }
 
-    public static void main(String[] args) throws FileNotFoundException {
+    private final String path = "C:\\Users\\Moshe Sayada\\IdeaProjects\\TextSearchEngine\\data";
+    private final String query = "dog";
+
+    @Test3
+    void testIOSearcher() throws IOException {
         IOSearcher searcher = new IOSearcher();
-//        IOSearcher.Result result = searcher.search("dog", "C:\\Users\\Moshe Sayada\\IdeaProjects\\TextSearchEngine\\data");
-//        System.out.println("Result: " + result.getQuery() + result.getAnswer());
+        Result result = searcher.search(query, path);
+        assertNotNull(result);
+        assertTrue(result.getQuery().contains(query));
+    }
 
-        CacheIOSearcher cacheSearcher = new CacheIOSearcher( searcher);
-         while (true) {
-             Scanner scan = new Scanner(System.in);
-             System.out.println("enter path:");
-             String path = scan.nextLine();
-             System.out.println("enter text search:");
-             String text = scan.nextLine();
+    @Test3
+    void testParallelIOSearcher() throws IOException {
+        ParallelIOSearcher searcher = new ParallelIOSearcher();
+        Result result = searcher.search(query, path);
+        assertNotNull(result);
+        assertTrue(result.getQuery().contains("dog"));
+    }
 
-             Result r = cacheSearcher.search(text, path);
-             System.out.println(r.getAnswer());
-//             Set<Result> set = cacheSearcher.getCachedResults();
-//             System.out.println(set);
-          }
+    @Test3
+    void testCacheIOSearcher() throws IOException {
+        IOSearcher ios = new IOSearcher();
+        CacheIOSearcher searcher = new CacheIOSearcher(ios);
+        Result result = searcher.search(query, path);
+        assertNotNull(result);
+        assertTrue(result.getQuery().contains("dog"));
+        assertEquals(result, searcher.search(query, path));
+        CacheIOSearcher cs = new CacheIOSearcher(ios);
+        cs.search(query, path);
+        int size = cs.getCachedResults().size();
+        cs.search(query, path);
+        //The cache does not increase
+        assertTrue(cs.getCachedResults().size() == size);
+        cs.getCachedResults().size();
+        cs.search("fish", path);
+        assertTrue(cs.getCachedResults().size()==size+1 );
 
     }
+
+    @Test3
+    void testLRUCacheSearcher() throws IOException {
+        IOSearcher ios = new IOSearcher();
+        CacheIOSearcher cs = new CacheIOSearcher(ios);
+        LRUCacheSearcher searcher = new LRUCacheSearcher(cs, 2);
+        Result result1 = searcher.search(query, path);
+        assertNotNull(result1);
+        assertTrue(result1.getQuery().contains(query));
+        Result result2 = searcher.search("kkkkkkkkkkkkkkkk", path);
+        assertNotNull(result2);
+        assertTrue(result2.getAnswer().isEmpty() );
+         Result result3 = searcher.search(query, path);
+        assertNotNull(result3);
+        assertTrue(result3.getQuery().contains(query));
+//        assertNull(searcher.getCachedResults().contains("java"));
+    }
+
+    @Test3
+    void testLFUCacheSearcher() throws IOException {
+        IOSearcher ios = new IOSearcher();
+        CacheIOSearcher cs = new CacheIOSearcher(ios);
+        LFUCacheSearcher searcher = new LFUCacheSearcher(cs, 2);
+        Result result1 = searcher.search(query, path);
+        assertNotNull(result1);
+        assertTrue(result1.getQuery().contains(query));
+
+//        assertNull(searcher.getCache().get("java"));
+    }
+
+    @Test3
+    void testObservableCacheSearcher() throws IOException {
+        IOSearcher ios = new IOSearcher();
+        CacheIOSearcher cs = new CacheIOSearcher(ios);
+        ObservableCacheSearcher searcher = new ObservableCacheSearcher(cs);
+        Logger logger = new Logger("log.txt", searcher);
+        searcher.addObserver(logger);
+        Result result1 = searcher.search(query, path);
+        assertNotNull(result1);
+        assertTrue(result1.getQuery().contains(query));
+
+        searcher.remove(searcher.getCachedResults().iterator().next());
+    }
+
+    @Test3
+    void testLogger() throws IOException {
+        IOSearcher ios = new IOSearcher();
+        CacheIOSearcher cs = new CacheIOSearcher(ios);
+        ObservableCacheSearcher ocs = new ObservableCacheSearcher(cs);
+        Logger logger = new Logger("log.txt", cs);
+        ocs.addObserver(logger);
+        Result result1 = ocs.search(query, path);
+        assertNotNull(result1);
+        assertTrue(result1.getQuery().contains(query));
+//        assertEquals(logger.getLog(), "Search completed. Cache size: 1\n");
+    }
+
+
 }
-//import org.junit.Before;
-//        import org.junit.Test;
-//
-//        import java.io.FileNotFoundException;
-//        import java.util.HashMap;
-//        import java.util.Map;
-//        import java.util.Set;
-//
-//        import static org.junit.Assert.assertEquals;
-//        import static org.junit.Assert.assertTrue;
-//        import static org.mockito.Mockito.*;
-//
-//public class CacheIOSearcherTest {
-//    private IOSearcher.TextSearcher textSearcher;
-//    private CacheIOSearcher.ccc cacheIOSearcher;
-//    private Map<CacheIOSearcher.SearchKey, IOSearcher.Result> cache;
-//
-//    @Before
-//    public void setUp() {
-//        textSearcher = mock(IOSearcher.TextSearcher.class);
-//        cache = new HashMap<>();
-//        cacheIOSearcher = new CacheIOSearcher.ccc(cache, textSearcher);
-//    }
-//
-//    @Test
-//    public void testSearchCachedResult() throws FileNotFoundException {
-//        String text = "text";
-//        String rootPath = "rootPath";
-//        IOSearcher.Result result = new IOSearcher.Result(text, rootPath);
-//        when(textSearcher.search(text, rootPath)).thenReturn(result);
-//
-//        IOSearcher.Result searchedResult = cacheIOSearcher.search(text, rootPath);
-//        assertEquals(result, searchedResult);
-//        verify(textSearcher, times(1)).search(text, rootPath);
-//
-//        // Searching again should return the same result from cache
-//        searchedResult = cacheIOSearcher.search(text, rootPath);
-//        assertEquals(result, searchedResult);
-//        verify(textSearcher, times(1)).search(text, rootPath);
-//    }
-//
-//    @Test
-//    public void testGetCachedResults() throws FileNotFoundException {
-//        String text = "text";
-//        String rootPath = "rootPath";
-//        IOSearcher.Result result = new IOSearcher.Result(text, rootPath);
-//        when(textSearcher.search(text, rootPath)).thenReturn(result);
-//
-//        cacheIOSearcher.search(text, rootPath);
-//        Set<IOSearcher.Result> cachedResults = cacheIOSearcher.getCachedResults();
-//        assertEquals(1, cachedResults.size());
-//        assertTrue(cachedResults.contains(result));
-//    }
-//
-//    @Test
-//    public void testClear() throws FileNotFoundException {
-//        String text = "text";
-//        String rootPath = "rootPath";
-//        IOSearcher.Result result = new IOSearcher.Result(text, rootPath);
-//        when(textSearcher.search(text, rootPath)).thenReturn(result);
-//
-//        cacheIOSearcher.search(text, rootPath);
-//        cacheIOSearcher.clear();
-//        Set<IOSearcher.Result> cachedResults = cache
-
-
-
-

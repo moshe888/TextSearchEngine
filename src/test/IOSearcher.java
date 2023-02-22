@@ -11,14 +11,44 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+interface TextSearcher {
+    Result search(String text, String rootPath) throws FileNotFoundException;
+}
+
+
+interface Result {
+    String getQuery();
+    Map<String, Set<String>> getAnswer();
+}
+
 public class IOSearcher implements TextSearcher {
+
 
     @Override
     public Result search(String text, String rootPath) throws FileNotFoundException {
-        Result result = new ResultImpl(text, new HashMap<>());
+        Result result = new Result() {
+            private final Map<String, Set<String>> answer = new HashMap<>();
+
+            @Override
+            public String toString() {
+                return text +": " +answer;
+            }
+
+            @Override
+            public String getQuery() {
+                return text;
+            }
+
+            @Override
+            public Map<String, Set<String>> getAnswer() {
+                return answer;
+            }
+        };
+
 
         File root = new File(rootPath);
         searchRecursive(root, text, result);
+        System.out.println(result);
         return result;
     }
 
@@ -49,36 +79,27 @@ public class IOSearcher implements TextSearcher {
 }
 
 
-       class ResultImpl implements Result {
-        private final String query;
-        private final Map<String, Set<String>> answer;
-
-        public ResultImpl(String query, Map<String, Set<String>> answer) {
-            this.query = query;
-            this.answer = answer;
-        }
-
-        @Override
-        public String getQuery() {
-            return query;
-        }
-
-        @Override
-        public Map<String, Set<String>> getAnswer() {
-            return answer;
-        }
-    }
-
-
+//       class ResultImpl implements Result {
+//        private final String query;
+//        private final Map<String, Set<String>> answer;
+//
+//        public ResultImpl(String query, Map<String, Set<String>> answer) {
+//            this.query = query;
+//            this.answer = answer;
+//        }
+//
+//        @Override
+//        public String getQuery() {
+//            return query;
+//        }
+//
+//        @Override
+//        public Map<String, Set<String>> getAnswer() {
+//            return answer;
+//        }
+//    }
 
 
-interface TextSearcher {
-    Result search(String text, String rootPath) throws FileNotFoundException;
-}
 
 
-interface Result {
-    String getQuery();
-    Map<String, Set<String>> getAnswer();
-}
 
