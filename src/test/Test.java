@@ -19,7 +19,7 @@ class Test {
     private final String path = "C:\\Users\\Moshe Sayada\\IdeaProjects\\TextSearchEngine\\data";
     private final String query = "dog";
 
-    @Test3
+    @org.junit.jupiter.api.Test
     void testIOSearcher() throws IOException {
         IOSearcher searcher = new IOSearcher();
         Result result = searcher.search(query, path);
@@ -27,7 +27,7 @@ class Test {
         assertTrue(result.getQuery().contains(query));
     }
 
-    @Test3
+    @org.junit.jupiter.api.Test
     void testParallelIOSearcher() throws IOException {
         ParallelIOSearcher searcher = new ParallelIOSearcher();
         Result result = searcher.search(query, path);
@@ -35,7 +35,7 @@ class Test {
         assertTrue(result.getQuery().contains("dog"));
     }
 
-    @Test3
+    @org.junit.jupiter.api.Test
     void testCacheIOSearcher() throws IOException {
         IOSearcher ios = new IOSearcher();
         CacheIOSearcher searcher = new CacheIOSearcher(ios);
@@ -55,7 +55,7 @@ class Test {
 
     }
 
-    @Test3
+    @org.junit.jupiter.api.Test
     void testLRUCacheSearcher() throws IOException {
         IOSearcher ios = new IOSearcher();
         CacheIOSearcher cs = new CacheIOSearcher(ios);
@@ -72,7 +72,7 @@ class Test {
 //        assertNull(searcher.getCachedResults().contains("java"));
     }
 
-    @Test3
+    @org.junit.jupiter.api.Test
     void testLFUCacheSearcher() throws IOException {
         IOSearcher ios = new IOSearcher();
         CacheIOSearcher cs = new CacheIOSearcher(ios);
@@ -84,7 +84,7 @@ class Test {
 //        assertNull(searcher.getCache().get("java"));
     }
 
-    @Test3
+    @org.junit.jupiter.api.Test
     void testObservableCacheSearcher() throws IOException {
         IOSearcher ios = new IOSearcher();
         CacheIOSearcher cs = new CacheIOSearcher(ios);
@@ -98,7 +98,7 @@ class Test {
         searcher.remove(searcher.getCachedResults().iterator().next());
     }
 
-    @Test3
+    @org.junit.jupiter.api.Test
     void testLogger() throws IOException {
         IOSearcher ios = new IOSearcher();
         CacheIOSearcher cs = new CacheIOSearcher(ios);
